@@ -25,10 +25,10 @@ module SendGrid
     base.class_eval do
       class << self
         attr_accessor :default_sg_category, :default_sg_options, :default_subscriptiontrack_text,
-                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args
+                      :default_footer_text, :default_spamcheck_score, :default_sg_unique_args, :default_sg_asm_group_id
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_asm_group_id
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -96,11 +96,20 @@ module SendGrid
     def sendgrid_unique_args(unique_args = {})
       self.default_sg_unique_args = unique_args
     end
+
+    def sendgrid_asm_group_id(id)
+      self.default_sg_asm_group_id = id
+    end
   end
 
   # Call within mailer method to override the default value.
   def sendgrid_category(category)
     @sg_category = category
+  end
+
+  # Call within mailer method to override the default value.
+  def sendgrid_asm_group_id(id)
+    @sg_asm_group_id = id
   end
 
   # Call within mailer method to set unique args for this email.
@@ -229,6 +238,12 @@ module SendGrid
     # Set custom substitions
     if @sg_substitutions && !@sg_substitutions.empty?
       header_opts[:sub] = @sg_substitutions
+    end
+
+    # Set asm_group_id
+    @sg_asm_group_id ||= self.class.default_sg_asm_group_id
+    if @sg_asm_group_id && @sg_asm_group_id.is_a?(Integer)
+      header_opts[:asm_group_id] = @sg_asm_group_id
     end
 
     # Set enables/disables
