@@ -117,6 +117,10 @@ module SendGrid
     @sg_asm_group_id = id
   end
 
+  def sendgrid_asm_group
+    @sg_asm_group_id || self.class.default_sg_asm_group_id
+  end
+
   # Call within mailer method to set unique args for this email.
   # Merged with class-level unique args, if any exist.
   def sendgrid_unique_args(unique_args = {})
