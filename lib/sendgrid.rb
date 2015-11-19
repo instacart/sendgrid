@@ -29,7 +29,7 @@ module SendGrid
                       :default_sendgrid_debug
       end
       attr_accessor :sg_category, :sg_options, :sg_disabled_options, :sg_recipients, :sg_substitutions,
-                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_asm_group_id
+                    :subscriptiontrack_text, :footer_text, :spamcheck_score, :sg_unique_args, :sg_asm_group_id, :sg_send_at
     end
 
     # NOTE: This commented-out approach may be a "safer" option for Rails 3, but it
@@ -105,6 +105,10 @@ module SendGrid
     def sendgrid_asm_group_id(id)
       self.default_sg_asm_group_id = id
     end
+  end
+
+  def sendgrid_send_at(unix_timestamp)
+    @sg_send_at = unix_timestamp
   end
 
   # Call within mailer method to override the default value.
@@ -229,6 +233,10 @@ module SendGrid
     @sg_asm_group_id ||= self.class.default_sg_asm_group_id
     if @sg_asm_group_id && @sg_asm_group_id.is_a?(Integer)
       header_opts[:asm_group_id] = @sg_asm_group_id
+    end
+
+    if @sg_send_at && @sg_send_at.is_a?(Integer)
+      header_opts[:send_at] = @sg_send_at
     end
 
     # Set enables/disables
