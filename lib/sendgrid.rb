@@ -128,8 +128,9 @@ module SendGrid
   # Call within mailer method to set unique args for this email.
   # Merged with class-level unique args, if any exist.
   def sendgrid_unique_args(unique_args = {})
-    @sg_unique_args = unique_args
+    @sg_unique_args = (@sg_unique_args || {}).merge(unique_args)
   end
+  alias_method :sendgrid_add_unique_args, :sendgrid_unique_args
 
   # Call within mailer method to add an option not in the defaults.
   def sendgrid_enable(*options)
