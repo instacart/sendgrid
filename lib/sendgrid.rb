@@ -189,14 +189,14 @@ module SendGrid
   end
 
   # Take all of the options and turn it into the json format that SendGrid expects
-  def sendgrid_json_headers(mail)
+  def sendgrid_json_headers(mail, custom_headers={})
     if @sg_substitutions && !@sg_substitutions.empty?
       @sg_substitutions.each do |find, replace|
         raise ArgumentError.new("Array for #{find} is not the same size as the recipient array") if replace.size != @sg_recipients.size
       end
     end
 
-    header_opts = {}
+    header_opts = custom_headers
 
     #if not called within the mailer method, this will be nil so we default to empty hash
     @sg_unique_args = @sg_unique_args || {}
