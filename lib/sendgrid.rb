@@ -256,6 +256,7 @@ module SendGrid
     end
 
     output = header_opts.to_json.gsub(/(["\]}])([,:])(["\[{])/, '\\1\\2 \\3')
+    output = output.gsub(/(\d{10,})([,:])(\d{10,})/, '\\1\\2 \\3') # match for arrays of unix timestamps
     puts "SendGrid #{sendgrid_headers_key}: #{sendgrid_json_headers(message)}" if sendgrid_debug?
     output
   end
